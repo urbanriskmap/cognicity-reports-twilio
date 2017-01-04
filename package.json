@@ -1,0 +1,16 @@
+{
+  "name": "cognicity-reports-twilio",
+  "version": "0.0.1",
+  "description": "Twilio SMS connector for CogniCity GRASP",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tomas Holderness",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "dotenv": "^2.0.0",
+    "express": "^4.14.0",
+    "twilio": "^2.11.1"
+  }
+}
