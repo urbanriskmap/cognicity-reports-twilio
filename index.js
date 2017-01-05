@@ -1,6 +1,6 @@
 /* CogniCity Reports Twilio
  * Prototype SMS connectivity via Twilio service for GRASP links
- * Tomas Holderness, MIT 2017
+ * Tomas Holderness, & Matthew Berryman MIT 2017
 */
 
 // Libs
@@ -55,7 +55,7 @@ exports.handler = (event, context, callback) => {
   var card_request = {
     "username": fromNumber,
     "network":"sms",
-    "language":"id" // Default language hard coded (TODO - move to .env)
+    "language":process.env.DEFAULT_LANG // Default language hard coded (TODO - move to .env)
   }
  // Make the request
   request({
@@ -69,7 +69,7 @@ exports.handler = (event, context, callback) => {
     if (!error && response.statusCode === 200){
       // Now respond to Twilio
       twiml.message(function(){
-        this.body('Hi! I am Bencana Bot. Please send me your flood report using this link https://dev.petabencana.id/cards/'+body.cardId);
+        this.body('Hi! I am Bencana Bot. Please send me your flood report using this link '+ process.env.CARD_PATH + body.cardId);
       });
       res.writeHead(200, {'Content-Type': 'text/xml'});
       res.end(twiml.toString());
