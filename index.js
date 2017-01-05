@@ -68,8 +68,12 @@ exports.handler = (event, context, callback) => {
   }, function(error, response, body){
     if (!error && response.statusCode === 200){
       // Now respond to Twilio
+      var cardPath = "petabencana.id/cards";
+      if (process.env.STAGE) {
+        cardPath = process.env.STAGE + "." + cardPath;
+      }
       twiml.message(function(){
-        this.body('Hi! I am Bencana Bot. Please send me your flood report using this link '+ process.env.CARD_PATH + body.cardId);
+        this.body('Hi! I am Bencana Bot. Please send me your flood report using this link '+ cardPath + body.cardId);
       });
       res.writeHead(200, {'Content-Type': 'text/xml'});
       res.end(twiml.toString());
