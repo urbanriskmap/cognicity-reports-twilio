@@ -53,9 +53,9 @@ exports.handler = (event, context, callback) => {
   var fromNumber = paramsWithValue.From; // Sender's mobile number as a string, incl. + at front.
 
   var card_request = {
-    "username": "twilio",
+    "username": fromNumber,
     "network":"sms",
-    "language":"id"
+    "language":"id" // Default language hard coded (TODO - move to .env)
   }
  // Make the request
   request({
