@@ -63,6 +63,6 @@ exports.handler = (event, context, callback) => {
     twiml.message(function(){
       this.body('Hi! I am Bencana Bot. Please send me your flood report using this link https://dev.petabencana.id/cards/'+body.cardId);
     });
-    return done({message: JSON.stringify(twiml.toString())},200)
+    return done({message: JSON.stringify(twiml.toString())},200);
   })
 });
