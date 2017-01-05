@@ -27,9 +27,19 @@ var options = {
 }
 
 // This app's endpoint (entered into Twilio console)
-app.post('/sms', function(req, res){
+exports.handler = (event, context, callback) => {
   var twilio = require('twilio');
   var twiml = new twilio.TwimlResponse();
+
+  // Helper function to format the response
+  const done = (err, statusCode, res) => callback(err ? JSON.stringify({
+    statusCode: statusCode,
+    message: err.message
+  }): null,
+  {
+    statusCode: statusCode,
+    result: res
+  });
 
   // Get a card from our server
   // TODO extract Twilio metadata to log cell number against username
@@ -53,12 +63,6 @@ app.post('/sms', function(req, res){
     twiml.message(function(){
       this.body('Hi! I am Bencana Bot. Please send me your flood report using this link https://dev.petabencana.id/cards/'+body.cardId);
     });
-    res.writeHead(200, {'Content-Type': 'text/xml'});
-    res.end(twiml.toString());
+    return done({message: JSON.stringify(twiml.toString())},200)
   })
-});
-
-// Standup server for Twilio
-http.createServer(app).listen(1337, function(){
-  console.log("Express server listening on port 1337");
 });
