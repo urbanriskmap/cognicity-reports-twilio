@@ -66,13 +66,18 @@ exports.handler = (event, context, callback) => {
     json: true,
     body: card_request
   }, function(error, response, body){
-    // TODO - error handling (if !err & response.code === 200)...
-    // @talltom: see
-    // Now respond to Twilio
-    // prepare Twilio reply
-    twiml.message(function(){
-      this.body('Hi! I am Bencana Bot. Please send me your flood report using this link https://dev.petabencana.id/cards/'+body.cardId);
-    });
+    if (!error && response.statusCode === 200){
+      // Now respond to Twilio
+      twiml.message(function(){
+        this.body('Hi! I am Bencana Bot. Please send me your flood report using this link https://dev.petabencana.id/cards/'+body.cardId);
+      });
+      res.writeHead(200, {'Content-Type': 'text/xml'});
+      res.end(twiml.toString());
+    }
+    else {
+      console.log("Error with card request: "+ error);
+    }
+
     return done({message: twiml.toString()},200);
   })
 };
