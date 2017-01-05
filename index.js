@@ -7,6 +7,7 @@
 var http = require('http'),
     request = require('request'),
     express = require('express'),
+    querystring = require('querystring'),
     twilio = require('twilio');
 
 // Config
@@ -41,8 +42,16 @@ exports.handler = (event, context, callback) => {
     result: res
   });
 
+  console.log(event); // log event.
+
   // Get a card from our server
   // TODO extract Twilio metadata to log cell number against username
+  // @talltom: cell number? You're speaking American already? ;)
+
+  var paramsWithValue = querystring.parse(event.reqbody); // Convert x-www-form-urlencoded form with data as per https://www.twilio.com/docs/api/twiml/sms/twilio_request into an object.
+  // Note ".reqbody" is the key name specified in the integration request in API GW (see README.md).
+  var fromNumber = paramsWithValue.From; // Sender's mobile number as a string, incl. + at front.
+
   var card_request = {
     "username": "twilio",
     "network":"sms",
@@ -58,11 +67,12 @@ exports.handler = (event, context, callback) => {
     body: card_request
   }, function(error, response, body){
     // TODO - error handling (if !err & response.code === 200)...
+    // @talltom: see
     // Now respond to Twilio
     // prepare Twilio reply
     twiml.message(function(){
       this.body('Hi! I am Bencana Bot. Please send me your flood report using this link https://dev.petabencana.id/cards/'+body.cardId);
     });
-    return done({message: JSON.stringify(twiml.toString())},200);
+    return done({message: twiml.toString()},200);
   })
-});
+};
