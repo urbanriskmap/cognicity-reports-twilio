@@ -4,8 +4,7 @@
 */
 
 // Libs
-var http = require('http'),
-    request = require('request'),
+var request = require('request'),
     express = require('express'),
     querystring = require('querystring'),
     twilio = require('twilio');
@@ -75,8 +74,6 @@ exports.handler = (event, context, callback) => {
       twiml.message(function(){
         this.body('Hi! I am Bencana Bot. Please send me your flood report using this link https://'+ cardPath + body.cardId);
       });
-      res.writeHead(200, {'Content-Type': 'text/xml'});
-      res.end(twiml.toString());
     }
     else {
       console.log("Error with card request: "+ error);
