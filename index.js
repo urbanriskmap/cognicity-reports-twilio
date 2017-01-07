@@ -3,10 +3,30 @@
  * Tomas Holderness, & Matthew Berryman MIT 2017
 */
 
+exports.handler = function(event, context) {
+    console.log("\n\nLoading handler\n\n");
+    var sns = new AWS.SNS();
+
+    sns.publish({
+        Message: 'Send result of ' + event.request + ' to ' + event.email,
+        TopicArn: 'arn:aws:sns:region:id_number:topic'
+    }, function(err, data) {
+        if (err) {
+            console.log(err.stack);
+            return;
+        }
+        console.log('push sent');
+        console.log(data);
+        context.done(null, 'Request submitted! Expect an email within a couple of days.');
+    });
+};
+
+
 // Libs
 var request = require('request'),
     express = require('express'),
     querystring = require('querystring'),
+    sns = require('aws-sdk').SNS(),
     twilio = require('twilio');
 
 // Config
@@ -76,9 +96,21 @@ exports.handler = (event, context, callback) => {
       });
     }
     else {
-      console.log("Error with card request: "+ error);
-    }
+      twiml.message(function(){
+        this.body('Hi! There was a problem handling your report, please try again later.')
+      }
 
+      console.log("Error with card request: "+ error);
+      sns.publish({
+          Message: "Error with card request: "+ error,
+          TopicArn: process.env.SNS_TOPIC,
+      }, function(err, data) {
+          if (err) {
+              console.log(err.stack);
+              return;
+          }
+      });
+    }
     return done({message: twiml.toString()},200);
   })
 };
