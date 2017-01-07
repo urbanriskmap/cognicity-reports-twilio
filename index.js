@@ -79,7 +79,7 @@ exports.handler = (event, context, callback) => {
     else {
       twiml.message(function(){
         this.body('Hi! There was a problem handling your report, please try again later.')
-      }
+      });
 
       console.log("Error with card request: "+ error);
       sns.publish({
