@@ -7,7 +7,7 @@
 var request = require('request'),
     express = require('express'),
     querystring = require('querystring'),
-    sns = require('aws-sdk').SNS(),
+    AWS = require('aws-sdk'),
     twilio = require('twilio');
 
 // Config
@@ -31,6 +31,7 @@ var options = {
 exports.handler = (event, context, callback) => {
   var twilio = require('twilio');
   var twiml = new twilio.TwimlResponse();
+  var sns = new AWS.SNS();
 
   // Helper function to format the response
   const done = (err, statusCode, res) => callback(err ? JSON.stringify({
