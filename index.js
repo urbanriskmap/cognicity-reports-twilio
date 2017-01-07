@@ -46,8 +46,6 @@ exports.handler = (event, context, callback) => {
   console.log(event); // log event.
 
   // Get a card from our server
-  // TODO extract Twilio metadata to log cell number against username
-  // @talltom: cell number? You're speaking American already? ;)
 
   var paramsWithValue = querystring.parse(event.reqbody); // Convert x-www-form-urlencoded form with data as per https://www.twilio.com/docs/api/twiml/sms/twilio_request into an object.
   // Note ".reqbody" is the key name specified in the integration request in API GW (see README.md).
@@ -56,7 +54,7 @@ exports.handler = (event, context, callback) => {
   var card_request = {
     "username": fromNumber,
     "network":"sms",
-    "language":process.env.DEFAULT_LANG // Default language hard coded (TODO - move to .env)
+    "language":process.env.DEFAULT_LANG
   }
  // Make the request
   request({
