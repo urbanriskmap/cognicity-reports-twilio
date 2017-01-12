@@ -16,7 +16,7 @@ var app = express();
 
 // Post options to our cards service
 var options = {
-  host: 'https://data-dev.petabencana.id',
+  host: 'https://data.petabencana.id',
   path: '/cards',
   method: 'POST',
   port: 80,
