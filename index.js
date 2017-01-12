@@ -16,7 +16,7 @@ var app = express();
 
 // Post options to our cards service
 var options = {
-  host: API_SERVER,
+  host: process.env.API_SERVER,
   path: '/cards',
   method: 'POST',
   port: 80,
