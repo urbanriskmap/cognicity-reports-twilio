@@ -7,6 +7,7 @@
 var request = require('request'),
     express = require('express'),
     querystring = require('querystring'),
+    AWS = require('aws-sdk'),
     twilio = require('twilio');
 
 // Config
@@ -30,6 +31,7 @@ var options = {
 exports.handler = (event, context, callback) => {
   var twilio = require('twilio');
   var twiml = new twilio.TwimlResponse();
+  var sns = new AWS.SNS();
 
   // Helper function to format the response
   const done = (err, statusCode, res) => callback(err ? JSON.stringify({
@@ -44,8 +46,6 @@ exports.handler = (event, context, callback) => {
   console.log(event); // log event.
 
   // Get a card from our server
-  // TODO extract Twilio metadata to log cell number against username
-  // @talltom: cell number? You're speaking American already? ;)
 
   var paramsWithValue = querystring.parse(event.reqbody); // Convert x-www-form-urlencoded form with data as per https://www.twilio.com/docs/api/twiml/sms/twilio_request into an object.
   // Note ".reqbody" is the key name specified in the integration request in API GW (see README.md).
@@ -54,7 +54,7 @@ exports.handler = (event, context, callback) => {
   var card_request = {
     "username": fromNumber,
     "network":"sms",
-    "language":process.env.DEFAULT_LANG // Default language hard coded (TODO - move to .env)
+    "language":process.env.DEFAULT_LANG
   }
  // Make the request
   request({
@@ -76,9 +76,21 @@ exports.handler = (event, context, callback) => {
       });
     }
     else {
-      console.log("Error with card request: "+ error);
-    }
+      twiml.message(function(){
+        this.body('Hi! There was a problem handling your report, please try again later.')
+      });
 
+      console.log("Error with card request: "+ error);
+      sns.publish({
+          Message: "Error with card request: "+ error,
+          TopicArn: process.env.SNS_TOPIC,
+      }, function(err, data) {
+          if (err) {
+              console.log(err.stack);
+              return;
+          }
+      });
+    }
     return done({message: twiml.toString()},200);
   })
 };
